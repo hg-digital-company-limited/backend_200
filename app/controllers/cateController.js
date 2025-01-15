@@ -2,7 +2,7 @@ const CategoryModel = require('../models/category');
 const ProductModel = require('../models/product');
 
 const cateController = {
-    getAllCate: async (req, res) => {
+    getAllCate: async(req, res) => {
         const page = req.body.page || 1;
         const limit = req.body.limit || 10;
 
@@ -27,7 +27,7 @@ const cateController = {
         }
     },
 
-    createCate: async (req, res) => {
+    createCate: async(req, res) => {
         const category = new CategoryModel({
             name: req.body.name,
             description: req.body.description,
@@ -38,13 +38,12 @@ const cateController = {
         try {
             const newCategory = await category.save();
             res.status(200).json({ data: newCategory });
-        }
-        catch (err) {
+        } catch (err) {
             res.status(500).json(err);
         }
     },
 
-    deleteCate: async (req, res) => {
+    deleteCate: async(req, res) => {
         try {
             const user = await CategoryModel.findByIdAndDelete(req.params.id);
             if (!user) {
@@ -56,7 +55,7 @@ const cateController = {
         }
     },
 
-    updateCate: async (req, res) => {
+    updateCate: async(req, res) => {
         const { name, description, slug, image } = req.body;
 
         try {
@@ -70,7 +69,7 @@ const cateController = {
         }
     },
 
-    searchCateByName: async (req, res) => {
+    searchCateByName: async(req, res) => {
         const page = req.body.page || 1;
         const limit = req.body.limit || 10;
 
@@ -90,32 +89,31 @@ const cateController = {
         }
     },
 
-    getProductsByCategory: async (req, res) => {
+    getProductsByCategory: async(req, res) => {
         const categoryId = req.params.id;
         const page = req.query.page || 1;
         const limit = req.query.limit || 50000;
-    
+
         const options = {
-        page: page,
-        limit: limit,
+            page: page,
+            limit: limit,
         };
 
         console.log(categoryId);
-    
-        try {
-        const category = await CategoryModel.findById(categoryId);
-        if (!category) {
-            return res.status(404).json({ message: 'Category not found' });
-        }
 
-        const products = await ProductModel.paginate(
-            { category: categoryId },
-            options
-        );
-    
-        res.status(200).json({ data: products });
+        try {
+            const category = await CategoryModel.findById(categoryId);
+            if (!category) {
+                return res.status(404).json({ message: 'Category not found' });
+            }
+
+            const products = await ProductModel.paginate({ category: categoryId },
+                options
+            );
+
+            res.status(200).json({ data: products });
         } catch (err) {
-        res.status(500).json({ message: err.message });
+            res.status(500).json({ message: err.message });
         }
     },
 
