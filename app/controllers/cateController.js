@@ -26,7 +26,20 @@ const cateController = {
             res.status(500).json(err);
         }
     },
+    getCategories: async(req, res, next) => {
+        let categories;
+        try {
+            categories = await Category.find(); // Lấy tất cả các category
+            if (categories.length === 0) {
+                return res.status(404).json({ message: 'No categories found' });
+            }
+        } catch (err) {
+            return res.status(500).json({ message: err.message });
+        }
 
+        res.categories = categories; // Trả về danh sách category
+        next();
+    },
     createCate: async(req, res) => {
         const category = new CategoryModel({
             name: req.body.name,

@@ -23,10 +23,14 @@ module.exports = {
         }
     },
 
-    getCategory: async (req, res, next) => {
+    getCategory: async(req, res, next) => {
         let category;
+        let categories;
         try {
             category = await Category.findById(req.params.id);
+            categories = await Category.find(); // Lấy tất cả các category
+            return res.status(200).json({ categories });
+
             if (category == null) {
                 return res.status(404).json({ message: 'Cannot find category' });
             }
@@ -37,8 +41,21 @@ module.exports = {
         res.category = category;
         next();
     },
+    getCategories: async(req, res, next) => {
+        let categories;
+        try {
+            categories = await Category.find(); // Lấy tất cả các category
+            if (categories.length === 0) {
+                return res.status(404).json({ message: 'No categories found' });
+            }
+        } catch (err) {
+            return res.status(500).json({ message: err.message });
+        }
 
-    getProduct: async (req, res, next) => {
+        res.categories = categories; // Trả về danh sách category
+        next();
+    },
+    getProduct: async(req, res, next) => {
         try {
             const productId = req.params.id;
 
@@ -88,7 +105,7 @@ module.exports = {
         next();
     },
 
-    getNews: async (req, res, next) => {
+    getNews: async(req, res, next) => {
         let news;
         try {
             news = await News.findById(req.params.id);
@@ -103,7 +120,7 @@ module.exports = {
         next();
     },
 
-    getColor: async (req, res, next) => {
+    getColor: async(req, res, next) => {
         let news;
         try {
             news = await color.findById(req.params.id);
@@ -118,46 +135,46 @@ module.exports = {
         next();
     },
 
-    getOrder: async (req, res, next) => {
+    getOrder: async(req, res, next) => {
         try {
-        const order = await Order.findById(req.params.id)
-            .populate('user', 'username') // Lấy thông tin user và chỉ lấy trường name
-            .populate({
-            path: 'products.product',
-            select: 'name',
-            }); // Lấy thông tin products và chỉ lấy trường name của product
-    
-        if (!order) {
-            return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
-        }
+            const order = await Order.findById(req.params.id)
+                .populate('user', 'username') // Lấy thông tin user và chỉ lấy trường name
+                .populate({
+                    path: 'products.product',
+                    select: 'name',
+                }); // Lấy thông tin products và chỉ lấy trường name của product
 
-        console.log(order)
-    
-          // Truy cập và trả về tên cụ thể của từng ID
-        const userName = order.user ? order.user.username : null;
-        const productNames = order.products.map((product) => product.product.name);
-    
-        const result = {
-            _id: order._id,
-            user: userName,
-            products: productNames,
-            orderTotal: order.orderTotal,
-            address: order.address,
-            billing: order.billing,
-            status: order.status,
-            description: order.description,
-            createdAt: order.createdAt,
-            updatedAt: order.updatedAt,
-        };
-    
-        res.order = result;
-        next();
+            if (!order) {
+                return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+            }
+
+            console.log(order)
+
+            // Truy cập và trả về tên cụ thể của từng ID
+            const userName = order.user ? order.user.username : null;
+            const productNames = order.products.map((product) => product.product.name);
+
+            const result = {
+                _id: order._id,
+                user: userName,
+                products: productNames,
+                orderTotal: order.orderTotal,
+                address: order.address,
+                billing: order.billing,
+                status: order.status,
+                description: order.description,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt,
+            };
+
+            res.order = result;
+            next();
         } catch (err) {
-        return res.status(500).json({ message: err.message });
+            return res.status(500).json({ message: err.message });
         }
     },
 
-    checkRole: (role) => async (req, res, next) => {
+    checkRole: (role) => async(req, res, next) => {
         if (req.user.role !== role) {
             return res.status(403).send('Forbidden');
         }

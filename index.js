@@ -26,14 +26,13 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
 
-mongoose.connect('mongodb+srv://KleinWatch:fjcBHfJHyAx9OrC9@cluster0.y47al.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://KleinWatch:fjcBHfJHyAx9OrC9@cluster0.y47al.mongodb.net/KleinWatch?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('Connected to MongoDB.');
     })
     .catch((error) => {
         console.error('MongoDB connection error:', error);
     });
-
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/product', productRoute);
