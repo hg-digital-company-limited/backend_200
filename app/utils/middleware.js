@@ -28,9 +28,6 @@ module.exports = {
         let categories;
         try {
             category = await Category.findById(req.params.id);
-            categories = await Category.find(); // Lấy tất cả các category
-            return res.status(200).json({ categories });
-
             if (category == null) {
                 return res.status(404).json({ message: 'Cannot find category' });
             }
